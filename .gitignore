@@ -1,0 +1,13 @@
+# Ignore everything
+*
+
+# But not these files...
+!.gitignore
+
+!.bashrc
+!.bash_profile
+!.tmux.conf
+
+!.vimrc
+
+!.tridactylrc
