@@ -157,8 +157,8 @@ alias tpd='terraform plan -destroy 2>&1 | tee /tmp/tf-plan-destroy.log'
 alias ta='terraform apply -auto-approve 2>&1 | tee /tmp/tf-apply.log'
 alias td='terraform destroy -force 2>&1 | tee /tmp/tf-destroy.log'
  
-#export PACKER_LOG=1
-#export PACKER_LOG_PATH="packer.log"
+export PACKER_LOG=1
+export PACKER_LOG_PATH="/tmp/packer.log"
 export TF_LOG=WARN
 export TF_LOG_PATH="/tmp/terraform.log"
 
