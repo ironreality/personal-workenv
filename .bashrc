@@ -99,7 +99,8 @@ fi
 
 ############## functions #################
 
-myip() { elinks -dump myip.net | grep 'Your IP Address:'; }
+#myip() { elinks -dump myip.net | grep 'Your IP Address:'; }
+myip() { curl -s http://ipinfo.io/ip; }
 myspeed() { wget --output-document=/dev/null http://speedtest.wdc01.softlayer.com/downloads/test500.zip; }
 spaty() { /usr/bin/sudo /usr/sbin/pm-hibernate; }
 
