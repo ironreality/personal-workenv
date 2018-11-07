@@ -171,7 +171,6 @@ alias kbr='setxkbmap us,ru -option "grp:shifts_toggle"'
 
 alias config_show="e -v '(^#|^$|^[[:space:]]+#)'"
 
-alias g='git'
 alias gs='git status'
 alias gl='git log'
 alias gd='git diff'
@@ -234,15 +233,21 @@ alias kgd='kubectl get deploy'
 alias kgr='kubectl get rs' 
 alias kgn='kubectl get nodes' 
 alias kgj='kubectl get jobs' 
+alias kgc='kubectl get cronjobs'
 
 alias kds='kubectl describe services' 
 alias kdn='kubectl describe nodes' 
 alias kdd='kubectl describe deploy' 
 alias kdr='kubectl describe rs' 
 alias kdj='kubectl describe jobs' 
+alias kdc='kubectl describe cronjobs'
 
 alias ktn='kubectl top nodes'
 alias krlstdpl='kubectl rollout status deployment'
+
+alias g='gcloud'
+alias gcil='gcloud compute instances list'
+alias gssh='gcloud compute ssh'
 
 #source <(kubectl completion bash)
 source ~/.bash_completion_k8s
