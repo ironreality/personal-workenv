@@ -18,6 +18,11 @@ nmap <C-J> 5j
 nmap <C-K> 5k
 nmap <C-L> 5l
 
+" tabulation settings
+set tabstop=2
+set expandtab
+set shiftwidth=2
+set softtabstop=2
 
 " vim-terraform - https://github.com/hashivim/vim-terraform
 " let g:terraform_align=1
