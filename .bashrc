@@ -139,7 +139,7 @@ alias t='top'
 alias i='ip addr'
 alias v='vim'
 alias p='pwd'
-alias e='egrep'
+alias e='egrep --color'
 alias sy='systemctl '
 alias sudo='sudo '
 alias svim='sudo vim'
@@ -176,7 +176,7 @@ alias gs='git status'
 alias gl='git log'
 alias gd='git diff'
 
-alias h='helm'
+alias h='htop'
 
 alias dps="docker ps"
 alias dl="docker logs"
