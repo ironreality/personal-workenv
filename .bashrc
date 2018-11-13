@@ -154,8 +154,8 @@ alias po="popd"
 alias tp='terraform validate . && terraform plan 2>&1 | tee /tmp/tf-plan.log'
 alias tpf='terraform fmt . && terraform validate . && terraform plan 2>&1 | tee /tmp/tf-plan.log'
 alias tpd='terraform plan -destroy 2>&1 | tee /tmp/tf-plan-destroy.log'
-alias ta='terraform apply -auto-approve 2>&1 | tee /tmp/tf-apply.log'
-alias td='terraform destroy -force 2>&1 | tee /tmp/tf-destroy.log'
+alias ta='time terraform apply -auto-approve 2>&1 | tee /tmp/tf-apply.log'
+alias td='time terraform destroy -force 2>&1 | tee /tmp/tf-destroy.log'
  
 export PACKER_LOG=1
 export PACKER_LOG_PATH="/tmp/packer.log"
