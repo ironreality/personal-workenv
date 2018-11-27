@@ -39,8 +39,7 @@ complete -cf ionice
 ############## environment ###################
 
 # Go
-export GOROOT=/usr/lib/go-1.10
-export GOPATH=$HOME/coding/go
+export GOPATH=$HOME
 
 umask 022
 
@@ -52,7 +51,7 @@ export LESS="-R"
 
 export GREP_COLORS='ms=01;31:mc=01;31:sl=:cx=:fn=0;49;92:ln=32:bn=32:se=36'
 
-export PATH=$HOME/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:/opt/bin:$GOROOT/bin:/home/yamato/.local/bin
+export PATH=$HOME/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:/opt/bin:$GOROOT/bin:/home/yamato/.local/bin:/usr/local/go/bin:$(go env GOPATH)/bin
 
 export HISTFILESIZE=50000
 export HISTSIZE=2000
@@ -175,6 +174,7 @@ alias config_show="e -v '(^#|^$|^[[:space:]]+#)'"
 alias gs='git status'
 alias gl='git log'
 alias gd='git diff'
+alias gcm='git checkout master'
 
 alias h='htop'
 
