@@ -6,6 +6,11 @@ filetype plugin indent on
 
 set number
 
+" highlight search results
+set hlsearch
+" turn off highlighting with Space
+:nnoremap <silent> <Space> :nohlsearch<Bar>:echo<CR>
+
 set nobackup
 set noswapfile
 
