@@ -172,10 +172,12 @@ alias kbr='setxkbmap us,ru -option "grp:shifts_toggle"'
 
 alias config_show="e -v '(^#|^$|^[[:space:]]+#)'"
 
+alias gb='git branch'
 alias gs='git status'
 alias gl='git log'
 alias gd='git diff'
 alias gcm='git checkout master'
+alias gpom='git push origin master'
 
 alias h='htop'
 
