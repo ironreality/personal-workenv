@@ -39,6 +39,7 @@ complete -cf ionice
 ############## environment ###################
 
 # Go
+export GOROOT=/usr/local/go
 export GOPATH=$HOME
 
 umask 022
