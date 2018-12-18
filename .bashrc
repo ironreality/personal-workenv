@@ -37,11 +37,6 @@ complete -cf nice
 complete -cf ionice
 
 ############## environment ###################
-
-# Go
-export GOROOT=/usr/local/go
-export GOPATH=$HOME
-
 umask 022
 
 export EDITOR=$(which vim)
@@ -52,7 +47,12 @@ export LESS="-R"
 
 export GREP_COLORS='ms=01;31:mc=01;31:sl=:cx=:fn=0;49;92:ln=32:bn=32:se=36'
 
-export PATH=$HOME/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:/opt/bin:$GOROOT/bin:/home/yamato/.local/bin:/usr/local/go/bin:$(go env GOPATH)/bin
+export PATH=$HOME/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:/opt/bin:$GOROOT/bin:/home/yamato/.local/bin:/usr/local/go/bin
+
+# Go
+export GOROOT=/usr/local/go
+export GOPATH=$HOME
+export PATH=$PATH:$(go env GOPATH)/bin
 
 export HISTFILESIZE=50000
 export HISTSIZE=2000
