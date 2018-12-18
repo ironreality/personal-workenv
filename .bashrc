@@ -253,15 +253,5 @@ alias g='gcloud'
 alias gcil='gcloud compute instances list'
 alias gssh='gcloud compute ssh'
 
-#source <(kubectl completion bash)
-source ~/.bash_completion_k8s
-source ~/.bash_completion_helm
-
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/home/yamato/Downloads/google-cloud-sdk/path.bash.inc' ]; then . '/home/yamato/Downloads/google-cloud-sdk/path.bash.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/home/yamato/Downloads/google-cloud-sdk/completion.bash.inc' ]; then . '/home/yamato/Downloads/google-cloud-sdk/completion.bash.inc'; fi
-
 # direnv - https://direnv.net/
 eval "$(direnv hook bash)"
