@@ -253,5 +253,12 @@ alias g='gcloud'
 alias gcil='gcloud compute instances list'
 alias gssh='gcloud compute ssh'
 
+
+# go aliases
+alias gob='go build'
+
+
+### FINAL ACTIONS BELOW ###
+
 # direnv - https://direnv.net/
 eval "$(direnv hook bash)"
