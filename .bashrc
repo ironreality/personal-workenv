@@ -152,9 +152,19 @@ alias po="popd"
 # Teraform & Packer related
 
 alias tp='terraform validate . && terraform plan 2>&1 | tee /tmp/tf-plan.log'
-alias tpf='terraform fmt . && terraform validate . && terraform plan 2>&1 | tee /tmp/tf-plan.log'
+
+# terraform plan wrapper
+tpf() {
+  terraform fmt \
+  && terraform validate . \
+  && terraform plan "$@" 2>&1 | tee /tmp/tf-plan.log
+}
+
+ta() {
+  time terraform apply "$@" -auto-approve 2>&1 | tee /tmp/tf-apply.log
+}
+
 alias tpd='terraform plan -destroy 2>&1 | tee /tmp/tf-plan-destroy.log'
-alias ta='time terraform apply -auto-approve 2>&1 | tee /tmp/tf-apply.log'
 alias td='time terraform destroy -force 2>&1 | tee /tmp/tf-destroy.log'
  
 export PACKER_LOG=1
