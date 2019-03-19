@@ -40,3 +40,17 @@ autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 
 " Groovy syntax for Jenkinsfiles
 "autocmd BufNewFile,BufRead Jenkinsfile set syntax=json
+
+
+" restore the position in files
+function! ResCur()
+  if line("'\"") <= line("$")
+    normal! g`"
+    return 1
+  endif
+endfunction
+
+augroup resCur
+  autocmd!
+  autocmd BufWinEnter * call ResCur()
+augroup END
