@@ -207,17 +207,7 @@ alias kdf='kubectl delete -f'
 #	kubectl get pods --output=custom-columns=NAME:.metadata.name --no-headers | egrep "${_pattern}"
 #}
 
-# show logs for pod-pattern
-kl() {
-	opts=
-	if [[ ${1} == '-f' ]]; then
-		    opts=-f
-				shift $((OPTIND-1))
-	fi
-
-	podname=${1}
-	kubectl logs ${opts} ${podname}
-}
+alias kl='kubectl logs'
 
 # get shell in pod
 kshp() {
