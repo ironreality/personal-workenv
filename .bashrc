@@ -272,3 +272,9 @@ alias gob='go build'
 
 # direnv - https://direnv.net/
 eval "$(direnv hook bash)"
+
+# k8s completions
+source <(kubectl completion bash | sed s/kubectl/k/g)
+
+# helm completions
+source <(helm completion bash)
