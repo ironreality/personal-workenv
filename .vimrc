@@ -54,3 +54,9 @@ augroup resCur
   autocmd!
   autocmd BufWinEnter * call ResCur()
 augroup END
+
+function! InsMdCollapse()
+  r~/.vim/templates/md_collapse.tpl
+endfunction
+
+:command InsMdClps call InsMdCollapse()
