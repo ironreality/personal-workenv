@@ -1,10 +1,3 @@
-####### source global definitions (if any) #############
-if [ -f /etc/bash_completion ]; then
-. /etc/bash_completion
-elif [ -f /usr/local/etc/bash_completion ]; then
-. /usr/local/etc/bash_completion
-fi
-
 if [ -f ~/.bash_sensitive ]; then
 . ~/.bash_sensitive   # --> Read if present.
 fi
@@ -154,11 +147,7 @@ alias po="popd"
 alias tp='terraform validate . && terraform plan 2>&1 | tee /tmp/tf-plan.log'
 
 # terraform plan wrapper
-tpf() {
-  terraform fmt \
-  && terraform validate . \
-  && terraform plan "$@" 2>&1 | tee /tmp/tf-plan.log
-}
+alias tpf='tp'
 
 ta() {
   time terraform apply "$@" -auto-approve 2>&1 | tee /tmp/tf-apply.log
@@ -200,13 +189,6 @@ alias kcontextinfo='kubectl config current-context'
 
 alias kaf='kubectl apply -f'
 alias kdf='kubectl delete -f'
-
-# get pod name by pattern
-#k_get_pod_names() {
-#	_pattern=${1}
-#	kubectl get pods --output=custom-columns=NAME:.metadata.name --no-headers | egrep "${_pattern}"
-#}
-
 alias kl='kubectl logs'
 
 # get shell in pod
