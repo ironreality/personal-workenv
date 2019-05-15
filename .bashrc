@@ -39,7 +39,7 @@ complete -cf ionice
 ############## environment ###################
 umask 022
 
-export EDITOR=$(which vim)
+export EDITOR=$(which nvim)
 export PAGER=$(which less)
 export LESS="-R"
 #export PAGER=/usr/share/vim/vim80/macros/less.sh
@@ -137,12 +137,12 @@ alias s='set -o vi'
 alias hi='history'
 alias t='top'
 alias i='ip addr'
-alias v='vim'
+alias v='nvim -u ~/.vimrc'
 alias p='pwd'
 alias e='egrep --color'
 alias sy='systemctl '
 alias sudo='sudo '
-alias svim='sudo vim'
+alias svim='sudo nvim -u ~/.vimrc'
 alias ipcalc='ipcalc --nocolor'
 
 alias d='dirs -v'
