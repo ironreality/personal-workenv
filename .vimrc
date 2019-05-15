@@ -41,6 +41,9 @@ autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 " Groovy syntax for Jenkinsfiles
 "autocmd BufNewFile,BufRead Jenkinsfile set syntax=json
 
+" add yaml stuffs
+au! BufNewFile,BufReadPost *.{yaml,yml} set filetype=yaml
+autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 
 " restore the position in files
 function! ResCur()
