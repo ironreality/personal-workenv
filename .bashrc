@@ -200,8 +200,7 @@ alias kl='kubectl logs'
 
 # get shell in pod
 kshp() {
-	pod=${1}
-	kubectl exec -it ${pod} bash || { echo "Bash has failed, trying connect with sh..."; kubectl exec -it ${pod} sh; }
+	kubectl exec $* -it -- bash || { echo "Bash has failed, trying connect with sh..."; kubectl exec $* -it -- sh; }
 }
 
 alias kdp='kubectl describe pod'
