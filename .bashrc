@@ -70,13 +70,6 @@ elif [ -f /var/mail/${USER} ]; then
 export MAIL="/var/mail/${USER}"
 fi
 
-# Java env
-#export CLASSPATH=".:/home/ubuntu/coding/java/TIJ4/code/:/home/yamato/coding/java/TIJ4/code"
-export JAVA_HOME=/usr/lib/jvm/java-8-oracle
-
-# Ruby env
-#[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-    
 #############  Shell promts ################
 
 if [ "$UID" -eq 0 -a "$USER" = "root" ]
@@ -99,10 +92,8 @@ fi
 
 ############## functions #################
 
-#myip() { elinks -dump myip.net | grep 'Your IP Address:'; }
 myip() { curl -s http://ipinfo.io/ip; }
 myspeed() { wget --output-document=/dev/null http://speedtest.wdc01.softlayer.com/downloads/test500.zip; }
-spaty() { /usr/bin/sudo /usr/sbin/pm-hibernate; }
 
 # notify shortcut
 jobdone() { echo "DONE!" | mail -s "$(hostname): ${1:-Your job is done} [NOSR]" ${2:-ironreality@gmail.com}; }
@@ -128,7 +119,6 @@ to() { id=${1}; docker exec -it ${id} /bin/bash || docker exec -it ${id} /bin/sh
 
 # pull all Git repos & subrepos
 git_pull_all() { for i in $(find . -type d -name '.git'); do echo "=== ${i} ==="; cd "${i/.git/}"; git pull; cd -; done; }
-
 
 ################# aliases ###################
 
@@ -171,10 +161,6 @@ export TF_LOG_PATH="/tmp/terraform.log"
 # http://www.cyberciti.biz/faq/linux-which-process-is-using-swap/
 alias show_swap_usage='for file in /proc/*/status ; do awk '\''/VmSwap|Name/{printf $2 " " $3}END{ print ""}'\'' $file; done | sort -k 2 -n -r | less'
 alias swapclean='sudo swapoff /dev/mapper/mint--vg-swap_1 && sudo swapon /dev/mapper/mint--vg-swap_1'
-#alias verseq='cd ${HOME}/.wine/drive_c/Program\ Files\ \(x86\)/VerseQ/ && wine VerseQ.exe >/dev/null &'
-
-alias kbu='setxkbmap us,ua -option "grp:shifts_toggle"'
-alias kbr='setxkbmap us,ru -option "grp:shifts_toggle"'
 
 alias config_show="e -v '(^#|^$|^[[:space:]]+#)'"
 
