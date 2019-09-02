@@ -190,44 +190,107 @@ alias h='htop'
 alias dps="docker ps"
 alias dl="docker logs"
 
-alias k='kubectl'
-alias kclusterinfo='kubectl cluster-info'
-alias kcontextinfo='kubectl config current-context'
-
-alias kaf='kubectl apply -f'
-alias kdf='kubectl delete -f'
-alias kl='kubectl logs'
-
 # get shell in pod
 kshp() {
 	kubectl exec $* -it -- bash || { echo "Bash has failed, trying connect with sh..."; kubectl exec $* -it -- sh; }
 }
 
-alias kdp='kubectl describe pod'
-alias ktp='kubectl top pods'
+kcurl() {
+  kubectl run --generator=run-pod/v1 --rm testcurl --image=yauritux/busybox-curl -it
+}
 
-# https://github.com/johanhaleby/kubetail - aggregates logs from multiple pods
-alias kt='kubetail'
+# a network trouble-shooting container - https://github.com/nicolaka/netshoot
+knetshoot() {
+  if [[ $1 == '-host' ]]; then
+    hostnet='"spec": {"hostNetwork": true}'
+  else
+    hostnet=
+  fi
 
-# autocompletion for pod names
-_kubetail()
+  #kubectl run --generator=run-pod/v1 tmp-shell --rm -i --tty ${hostnet} --image nicolaka/netshoot -- /bin/bash
+  kubectl run --generator=run-pod/v1 tmp-shell --rm -i --tty --overrides='{'"$hostnet"'}' --image nicolaka/netshoot -- /bin/bash
+}
+
+# autocompletion for k8s objects
+_kube_get_nodes()
+{
+  local curr_arg;
+  curr_arg=${COMP_WORDS[COMP_CWORD]}
+  COMPREPLY=( $(compgen -W "$(kubectl get nodes --no-headers | awk '{print $1}')" -- $curr_arg ) );
+}
+
+_kube_get_namespaces()
+{
+  local curr_arg;
+  curr_arg=${COMP_WORDS[COMP_CWORD]}
+  COMPREPLY=( $(compgen -W "$(kubectl get namespaces --no-headers | awk '{print $1}')" -- $curr_arg ) );
+}
+
+_kube_get_pods()
 {
   local curr_arg;
   curr_arg=${COMP_WORDS[COMP_CWORD]}
   COMPREPLY=( $(compgen -W "$(kubectl get pods --no-headers | awk '{print $1}')" -- $curr_arg ) );
 }
-complete -F _kubetail kubetail kt kl kgp kdp ktp kshp
-###
 
+_kube_get_deployments()
+{
+  local curr_arg;
+  curr_arg=${COMP_WORDS[COMP_CWORD]}
+  COMPREPLY=( $(compgen -W "$(kubectl get deployments --no-headers | awk '{print $1}')" -- $curr_arg ) );
+}
+
+_kube_get_services()
+{
+  local curr_arg;
+  curr_arg=${COMP_WORDS[COMP_CWORD]}
+  COMPREPLY=( $(compgen -W "$(kubectl get deployments --no-headers | awk '{print $1}')" -- $curr_arg ) );
+}
+
+_kube_get_secrets()
+{
+  local curr_arg;
+  curr_arg=${COMP_WORDS[COMP_CWORD]}
+  COMPREPLY=( $(compgen -W "$(kubectl get secrets --no-headers | awk '{print $1}')" -- $curr_arg ) );
+}
+
+_kube_get_configmaps()
+{
+  local curr_arg;
+  curr_arg=${COMP_WORDS[COMP_CWORD]}
+  COMPREPLY=( $(compgen -W "$(kubectl get cm --no-headers | awk '{print $1}')" -- $curr_arg ) );
+}
+
+alias k='kubectl'
+alias ns='kubens'
+alias kaf='kubectl apply -f'
+alias kdf='kubectl delete -f'
+alias kl='kubectl logs'
+
+alias kga='kubectl get all'
+alias kgaa='kubectl get all --all-namespaces'
 alias kgp='kubectl get pods'
+alias kgpo='kubectl get pods -o=yaml'
 alias kgs='kubectl get services' 
+alias kgso='kubectl get services -o=yaml'
+alias kgsc='kubectl get secrets'
+alias kgsco='kubectl get secrets -o=yaml'
+alias kgcm='kubectl get cm'
+alias kgcmo='kubectl get cm -o=yaml'
+alias kgns='kubectl get namespaces'
+alias kgnso='kubectl get namespaces -o=yaml'
 alias kgd='kubectl get deploy' 
+alias kgdo='kubectl get deploy -o=yaml'
 alias kgr='kubectl get rs' 
 alias kgn='kubectl get nodes' 
+alias kgno='kubectl get nodes -o=yaml'
 alias kgj='kubectl get jobs' 
 alias kgc='kubectl get cronjobs'
 
+alias kdp='kubectl describe pod'
 alias kds='kubectl describe services' 
+alias kdsc='kubectl describe secrets'
+alias kdns='kubectl describe namespaces'
 alias kdn='kubectl describe nodes' 
 alias kdd='kubectl describe deploy' 
 alias kdr='kubectl describe rs' 
@@ -235,16 +298,17 @@ alias kdj='kubectl describe jobs'
 alias kdc='kubectl describe cronjobs'
 
 alias ktn='kubectl top nodes'
-alias krlstdpl='kubectl rollout status deployment'
-
-alias g='gcloud'
-alias gcil='gcloud compute instances list'
-alias gssh='gcloud compute ssh'
-
+alias ktp='kubectl top pods'
+complete -F _kube_get_pods kgp kgpo kdp ktp kshp
+complete -F _kube_get_services kgs kgso kds
+complete -F _kube_get_secrets kgsc kgsco kdsc
+complete -F _kube_get_configmaps kgcm kgcmo kdcm
+complete -F _kube_get_deployments kgd kgdo kdd
+complete -F _kube_get_nodes kgn kgno kdn ktn
+complete -F _kube_get_namespaces ns kgns kgnso kdns
 
 # go aliases
 alias gob='go build'
-
 
 ### FINAL ACTIONS BELOW ###
 
