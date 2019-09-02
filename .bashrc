@@ -108,7 +108,7 @@ spaty() { /usr/bin/sudo /usr/sbin/pm-hibernate; }
 jobdone() { echo "DONE!" | mail -s "$(hostname): ${1:-Your job is done} [NOSR]" ${2:-ironreality@gmail.com}; }
 
 #shortcut functions
-a() { $(which apg) -M NC -m $1 -x $1 -n $2; }
+apg_() { $(which apg) -M NC -m $1 -x $1 -n $2; }
 w() { wget --no-check-certificate -S -O /dev/null "$*"; }
 # strace wrapper
 str() { strace -vyCTrf -s 1024  -o /tmp/strace.log -p "$1"; }
