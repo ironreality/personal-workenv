@@ -50,9 +50,12 @@ export GREP_COLORS='ms=01;31:mc=01;31:sl=:cx=:fn=0;49;92:ln=32:bn=32:se=36'
 export PATH=$HOME/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:/opt/bin:$GOROOT/bin:/home/yamato/.local/bin:/usr/local/go/bin
 
 # Go
-export GOROOT=/usr/local/go
+#export GOROOT=/usr/local/go
 export GOPATH=$HOME
 export PATH=$PATH:$(go env GOPATH)/bin
+
+# Kubebuilder
+export PATH=$PATH:/usr/local/kubebuilder/bin
 
 export HISTFILESIZE=50000
 export HISTSIZE=2000
@@ -70,25 +73,11 @@ elif [ -f /var/mail/${USER} ]; then
 export MAIL="/var/mail/${USER}"
 fi
 
-#############  Shell promts ################
+#############  Shell promt ################
+#export PS1='\[\e[37;1m\][\[\e[35;1m\]\u@\H\[\e[37;1m\]][\w]\[\e[m\]:'
 
-if [ "$UID" -eq 0 -a "$USER" = "root" ]
-then
-    export PS1=''
-#if root - red color in prompt
-#http://misc.flogisoft.com/bash/tip_colors_and_formatting
-    export PS1='\[\e[37;1m\][\[\e[31;1m\]\u@\H\[\e[37;1m\]][\w]\[\e[m\]:'
-else
-    #else - light blue color in prompt
-    export PS1=''
-    if [ "$SSH_CONNECTION" ]
-    then
-        export PS1='\[\e[37;1m\][\[\e[32;1m\]\u@\H\[\e[37;1m\]][\w]\[\e[m\]:'
-    else
-        export PS1='\[\e[37;1m\][\[\e[35;1m\]\u@\H\[\e[37;1m\]][\w]\[\e[m\]:'
-    fi
-fi
-
+# cyan color in prompt
+export PS1='\[\e[0;36m\][\u@\H][\w]\[\e[m\]:'
 
 ############## functions #################
 
@@ -141,6 +130,8 @@ alias po="popd"
 
 # Teraform & Packer related
 
+alias tf='terraform12'
+
 alias tp='terraform validate . && terraform plan 2>&1 | tee /tmp/tf-plan.log'
 
 # terraform plan wrapper
@@ -155,7 +146,7 @@ alias td='time terraform destroy -force 2>&1 | tee /tmp/tf-destroy.log'
  
 export PACKER_LOG=1
 export PACKER_LOG_PATH="/tmp/packer.log"
-export TF_LOG=WARN
+#export TF_LOG=WARN
 export TF_LOG_PATH="/tmp/terraform.log"
 
 # http://www.cyberciti.biz/faq/linux-which-process-is-using-swap/
@@ -251,7 +242,7 @@ alias k='kubectl'
 alias ns='kubens'
 alias kaf='kubectl apply -f'
 alias kdf='kubectl delete -f'
-alias kl='kubectl logs'
+alias kl='kubectl logs --all-containers'
 
 alias kga='kubectl get all'
 alias kgaa='kubectl get all --all-namespaces'
@@ -285,13 +276,26 @@ alias kdc='kubectl describe cronjobs'
 
 alias ktn='kubectl top nodes'
 alias ktp='kubectl top pods'
-complete -F _kube_get_pods kgp kgpo kdp ktp kshp
+complete -F _kube_get_pods kgp kgpo kdp ktp kshp kl
 complete -F _kube_get_services kgs kgso kds
 complete -F _kube_get_secrets kgsc kgsco kdsc
 complete -F _kube_get_configmaps kgcm kgcmo kdcm
 complete -F _kube_get_deployments kgd kgdo kdd
 complete -F _kube_get_nodes kgn kgno kdn ktn
 complete -F _kube_get_namespaces ns kgns kgnso kdns
+
+# Istio
+_istio_get_gateways()
+{
+  local curr_arg;
+  curr_arg=${COMP_WORDS[COMP_CWORD]}
+  COMPREPLY=( $(compgen -W "$(istioctl proxy-status  | egrep -v NAME | cut -d' ' -f1)" -- $curr_arg ) );
+}
+
+alias i='istioctl'
+alias ips='istioctl proxy-status'
+alias ipc='istioctl proxy-config'
+complete -F _istio_get_gateways ips
 
 # go aliases
 alias gob='go build'
@@ -305,4 +309,24 @@ eval "$(direnv hook bash)"
 source <(kubectl completion bash | sed s/kubectl/k/g)
 
 # helm completions
-source <(helm completion bash)
+# source <(helm completion bash)
+
+# stern completions
+source <(stern --completion=bash)
+
+# kompose
+source <(kompose completion bash)
+
+# eksctl
+source <(eksctl completion bash)
+
+# skaffold
+source <(skaffold completion bash)
+
+# ko
+# source <(ko completion)
+
+# Python
+# https://opensource.com/article/19/5/python-3-default-mac
+alias pip='/usr/local/Cellar/python@3.8/3.8.5/bin/pip3'
+alias python='/usr/local/Cellar/python@3.8/3.8.5/bin/python3'
