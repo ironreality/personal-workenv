@@ -47,18 +47,17 @@ export LESS="-R"
 
 export GREP_COLORS='ms=01;31:mc=01;31:sl=:cx=:fn=0;49;92:ln=32:bn=32:se=36'
 
-export PATH=$HOME/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:/opt/bin:$GOROOT/bin:/home/yamato/.local/bin:/usr/local/go/bin
+export PATH=$HOME/bin:/usr/local/bin:/usr/local/sbin:$GOROOT/bin:/home/yamato/.local/bin:/usr/local/go/bin:/usr/local/share/dotnet:/bin:/sbin:/usr/bin:/usr/sbin
 
 # Go
-#export GOROOT=/usr/local/go
 export GOPATH=$HOME
 export PATH=$PATH:$(go env GOPATH)/bin
 
 # Kubebuilder
 export PATH=$PATH:/usr/local/kubebuilder/bin
 
-export HISTFILESIZE=50000
-export HISTSIZE=2000
+export HISTFILESIZE=500000
+export HISTSIZE=100000
 export HISTTIMEFORMAT="%t%d.%m.%y %H:%M:%S%t"
 export HISTCONTROL=ignoredups:erasedups
 
@@ -74,10 +73,10 @@ export MAIL="/var/mail/${USER}"
 fi
 
 #############  Shell promt ################
-#export PS1='\[\e[37;1m\][\[\e[35;1m\]\u@\H\[\e[37;1m\]][\w]\[\e[m\]:'
+export PS1='\[\e[37;1m\][\[\e[35;1m\]\u@\H\[\e[37;1m\]][\w]\[\e[m\]:'
 
 # cyan color in prompt
-export PS1='\[\e[0;36m\][\u@\H][\w]\[\e[m\]:'
+# export PS1='\[\e[0;36m\][\u@\H][\w]\[\e[m\]:'
 
 ############## functions #################
 
