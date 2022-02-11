@@ -29,6 +29,10 @@ export PROMPT_COMMAND="history -a; history -c; history -r;"
 #set vi keyboard mode
 set -o vi
 
+# a proper shell variable expansion while shell completion
+# https://askubuntu.com/questions/70750/how-to-get-bash-to-stop-escaping-during-tab-completion
+shopt -s direxpand
+
 #complete command after sudo & man
 complete -cf sudo
 complete -cf man
@@ -55,6 +59,10 @@ export PATH=$PATH:$(go env GOPATH)/bin
 
 # Kubebuilder
 export PATH=$PATH:/usr/local/kubebuilder/bin
+
+# jenv
+export PATH="$HOME/.jenv/bin:$PATH"
+eval "$(jenv init -)"
 
 export HISTFILESIZE=500000
 export HISTSIZE=100000
@@ -183,8 +191,8 @@ knetshoot() {
     hostnet=
   fi
 
-  #kubectl run --generator=run-pod/v1 tmp-shell --rm -i --tty ${hostnet} --image nicolaka/netshoot -- /bin/bash
-  kubectl run --generator=run-pod/v1 tmp-shell --rm -i --tty --overrides='{'"$hostnet"'}' --image nicolaka/netshoot -- /bin/bash
+  #kubectl run --generator=run-pod/v1 tmp-shell --rm -i --tty --overrides='{'"$hostnet"'}' --image nicolaka/netshoot -- /bin/bash
+  kubectl run tmp-shell --rm -i --tty --image nicolaka/netshoot -- /bin/bash
 }
 
 # autocompletion for k8s objects
@@ -275,6 +283,7 @@ alias kdc='kubectl describe cronjobs'
 
 alias ktn='kubectl top nodes'
 alias ktp='kubectl top pods'
+
 complete -F _kube_get_pods kgp kgpo kdp ktp kshp kl
 complete -F _kube_get_services kgs kgso kds
 complete -F _kube_get_secrets kgsc kgsco kdsc
@@ -283,21 +292,8 @@ complete -F _kube_get_deployments kgd kgdo kdd
 complete -F _kube_get_nodes kgn kgno kdn ktn
 complete -F _kube_get_namespaces ns kgns kgnso kdns
 
-# Istio
-_istio_get_gateways()
-{
-  local curr_arg;
-  curr_arg=${COMP_WORDS[COMP_CWORD]}
-  COMPREPLY=( $(compgen -W "$(istioctl proxy-status  | egrep -v NAME | cut -d' ' -f1)" -- $curr_arg ) );
-}
-
-alias i='istioctl'
-alias ips='istioctl proxy-status'
-alias ipc='istioctl proxy-config'
-complete -F _istio_get_gateways ips
-
-# go aliases
-alias gob='go build'
+alias kt='kubectx'
+alias kctx='kubectx'
 
 ### FINAL ACTIONS BELOW ###
 
@@ -308,13 +304,10 @@ eval "$(direnv hook bash)"
 source <(kubectl completion bash | sed s/kubectl/k/g)
 
 # helm completions
-# source <(helm completion bash)
+source <(helm completion bash)
 
 # stern completions
 source <(stern --completion=bash)
-
-# kompose
-source <(kompose completion bash)
 
 # eksctl
 source <(eksctl completion bash)
@@ -326,6 +319,25 @@ source <(skaffold completion bash)
 # source <(ko completion)
 
 # Python
-# https://opensource.com/article/19/5/python-3-default-mac
-alias pip='/usr/local/Cellar/python@3.8/3.8.5/bin/pip3'
-alias python='/usr/local/Cellar/python@3.8/3.8.5/bin/python3'
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init --path)"
+export WORKON_HOME=~/src/.virtualenvs
+
+# Node.js
+source $(brew --prefix nvm)/nvm.sh
+
+# Podman
+#alias docker=podman
+
+# Java
+#export JAVA_HOME=$(/usr/libexec/java_home -v 11.0.12)
+
+# krew
+export PATH="${PATH}:${HOME}/.krew/bin"
+source <(kubectl krew completion bash)
+
+# kyverno-cli
+source <(kubectl kyverno completion bash)
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
