@@ -1,10 +1,18 @@
 colorscheme ron
+"colorscheme koehler
 
 execute pathogen#infect()
 syntax on
 filetype plugin indent on
 
+" backspace handling
+set backspace=indent,eol,start
+
+" wrap git commit lines at 72 symbols
+au FileType gitcommit setlocal tw=72
+
 set number
+set ruler
 
 " highlight search results
 set hlsearch
@@ -17,6 +25,12 @@ set noswapfile
 " search
 "set ignorecase
 
+
+" spelling
+" :setlocal spell
+" :setlocal spell spelllang=uk
+" autocmd BufRead,BufNewFile *.md setlocal spell
+
 " navigation speed up
 nmap <C-H> 5h
 nmap <C-J> 5j
@@ -28,12 +42,14 @@ set tabstop=2
 set expandtab
 set shiftwidth=2
 set softtabstop=2
+set tw=80
 
 " vim-terraform - https://github.com/hashivim/vim-terraform
 " let g:terraform_align=1
 " let g:terraform_fold_sections=1
 " let g:terraform_remap_spacebar=1
 " let g:terraform_commentstring='//%s'
+
 
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
