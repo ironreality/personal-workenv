@@ -30,10 +30,16 @@ set clipboard=unnamed
 """ Plugins settings
 """
 
-" load all plugins
-packloadall
-" load help files for all plugins
-silent! helptags ALL
+" load all plugins using vim-plug
+" https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+" put this file to ~/.vim/autoload/
+call plug#begin('~/.vim/plugged')
+Plug 'preservim/nerdtree'
+Plug 'tpope/vim-vinegar'
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'tpope/vim-fugitive'
+Plug 'tyru/open-browser.vim'
+call plug#end()
 
 " NERDTreejackNetrw
 let NERDTreeHijackNetrw = 0
