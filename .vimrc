@@ -1,16 +1,34 @@
 colorscheme ron
 
-set nocompatible
-syntax on
-filetype plugin indent on
-set autoindent
+" vim-specific settings
+if !has('nvim')
+  set nocompatible
+  filetype plugin indent on
+  syntax on
+  set autoindent
+  set autoread
+  set backspace=indent,eol,start
+  set belloff=all
+  set cscopeverbose
+  set complete-=i
+  set display=lastline,msgsep
+  set encoding=utf8
+  set formatoptions=tcqj
+  set fsync
+  set history=1000
+  set hlsearch
+  set incsearch
+  set langnoremap
+  set laststatus=2
+  set ruler
+  set showcmd
+  set sidescroll=1
+  set smarttab
+  set viminfo+=!
+  set wildmenu
+endif
 
 set number
-set ruler
-set showcmd
-
-set hlsearch
-set incsearch
 
 set nobackup
 set noswapfile
@@ -20,7 +38,6 @@ set expandtab
 set shiftwidth=4
 set backspace=2
 
-set encoding=utf8
 
 " osx clipboard integration
 set clipboard=unnamed
