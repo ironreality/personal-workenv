@@ -181,8 +181,8 @@ nnoremap <Right> :vertical resize -2<CR>
 map <C-n> :NERDTreeToggle<CR>
 
 " open recent files menu (CtrlP)
-map <C-r> :CtrlPMRU<CR>
-nnoremap <C-B> :CtrlPBuffer<CR>
+map <leader>r :CtrlPMRU<CR>
+nnoremap <leader>b :CtrlPBuffer<CR>
 
 " open current link or selection in browser
 nmap gx <Plug>(openbrowser-smart-search)
