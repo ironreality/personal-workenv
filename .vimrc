@@ -3,44 +3,51 @@
 
 " General settings {{{
 
-" vim-specific settings
-if !has('nvim')
-  set nocompatible
-  filetype plugin indent on
-  syntax on
-  set autoindent
-  set autoread
-  set backspace=indent,eol,start
-  set belloff=all
-  set cscopeverbose
-  set complete-=i
-  set encoding=utf8
-  set formatoptions=tcqj
-  set fsync
-  set history=1000
-  set hlsearch
-  set incsearch
-  set langnoremap
-  set laststatus=2 " always show status line
-  set ruler " ruler - line, column and % at the right bottom
-  set showcmd " show last command in the status line
-  set sidescroll=1
-  set smarttab
-  set viminfo+=!
-  set wildmenu
-endif
+set nocompatible
+filetype plugin indent on
+syntax on
 
+set autoindent " take indent for new line from previous line
+set autoread " reload file if the file changes on the disk
+set autowrite " write when switching buffers
+set backspace=indent,eol,start
+set belloff=all
+set cscopeverbose
+set complete-=i
+set encoding=utf8
+set formatoptions=tcqronj " set vims text formatting options
+set fsync
+set history=1000
+set hlsearch
+set incsearch
+set langnoremap
+set laststatus=2 " always show status line
+set ruler " ruler - line, column and % at the right bottom
+set showcmd " show last command in the status line
+set sidescroll=1
+set colorcolumn=81 " highlight the 80th column as an indicator
+set viminfo+=!
+set wildmenu
+set list " show trailing whitespace
+set listchars=tab:\·\ ,extends:›,precedes:‹,nbsp:˙,trail:▫
 set number " display line numbers
+set relativenumber
 set formatoptions+=o " continue comment marker in new lines.
 
 set nobackup
 set noswapfile
 
 set tabstop=4
-set expandtab
+set expandtab " expands tabs to spaces
+set smarttab
 set shiftwidth=4
 set backspace=2
 
+" Compete options for the pop up menu for autocompletion.
+set completeopt=menu,noselect
+
+" remove the horrendous preview window
+set completeopt-=preview
 
 " osx clipboard integration
 set clipboard=unnamed
@@ -69,6 +76,7 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'tomasr/molokai'
 Plug 'xolox/vim-misc'
 Plug 'xolox/vim-session'
+Plug 'Vimjas/vim-python-pep8-indent'
 call plug#end()
 
 " }}}
@@ -132,7 +140,7 @@ let g:airline_theme='molokai'
 
 " vim-session {{{
 
-let g:session_autoload = "no"
+let g:session_autoload = "yes"
 let g:session_autosave = "no"
 let g:session_command_aliases = 1
 
@@ -164,6 +172,10 @@ command! FixWhitespace :%s/\s\+$//e
 nnoremap <C-s> :w<CR>
 " switch off search results on Space
 nnoremap <space> :nohl<CR>
+" These mappings will make it so that going to the next one in a search will
+" center on the line it's found in.
+nnoremap n nzzzv
+nnoremap N Nzzzv
 
 " cycle through buffers
 nnoremap <C-j> :bp<CR>
