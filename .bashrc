@@ -1,14 +1,3 @@
-####### source global definitions (if any) #############
-if [ -f /etc/bash_completion ]; then
-. /etc/bash_completion
-elif [ -f /usr/local/etc/bash_completion ]; then
-. /usr/local/etc/bash_completion
-fi
-
-if [ -f ~/.bash_sensitive ]; then
-. ~/.bash_sensitive   # --> Read if present.
-fi
-
 ############  shell options ############
 #some readline fun there
 export INPUTRC=~/.inputrc
@@ -46,8 +35,6 @@ umask 022
 export EDITOR=$(which nvim)
 export PAGER=$(which less)
 export LESS="-R"
-#export PAGER=/usr/share/vim/vim80/macros/less.sh
-#alias less='/usr/share/vim/vim80/macros/less.sh'
 
 export GREP_COLORS='ms=01;31:mc=01;31:sl=:cx=:fn=0;49;92:ln=32:bn=32:se=36'
 
@@ -128,7 +115,6 @@ alias p='pwd'
 alias e='egrep --color'
 alias sy='systemctl '
 alias sudo='sudo '
-alias svim='sudo nvim -u ~/.vimrc'
 alias ipcalc='ipcalc --nocolor'
 
 alias d='dirs -v'
@@ -295,6 +281,12 @@ complete -F _kube_get_namespaces ns kgns kgnso kdns
 alias kt='kubectx'
 alias kctx='kubectx'
 
+
+alias kb='/usr/local/bin/kubie'
+kb-init() {
+  kubie ctx -f $KUBECONFIG
+}
+
 ### FINAL ACTIONS BELOW ###
 
 # direnv - https://direnv.net/
@@ -341,3 +333,4 @@ source <(kubectl krew completion bash)
 source <(kubectl kyverno completion bash)
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"'
