@@ -69,8 +69,6 @@ let mapleader = ','
 " put this file to ~/.vim/autoload/
 call plug#begin('~/.vim/plugged')
 Plug 'preservim/nerdtree'
-Plug 'tpope/vim-vinegar'
-Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'tyru/open-browser.vim'
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
@@ -200,9 +198,9 @@ nnoremap <Right> :vertical resize -2<CR>
 " switch on/off NERDTree
 map <C-n> :NERDTreeToggle<CR>
 
-" open recent files menu (CtrlP)
-map <leader>r :CtrlPMRU<CR>
-nnoremap <leader>b :CtrlPBuffer<CR>
+" open recent files / open buffers menu (FZF)
+map <leader>r :History<CR>
+nnoremap <leader>b :Buffers<CR>
 
 " open current link or selection in browser
 nmap gx <Plug>(openbrowser-smart-search)
