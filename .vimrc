@@ -12,7 +12,7 @@ set autoread " reload file if the file changes on the disk
 set autowrite " write when switching buffers
 set backspace=indent,eol,start
 set belloff=all
-set cscopeverbose
+"set cscopeverbose
 set complete-=i
 set encoding=utf8
 set formatoptions=tcqronj " set vims text formatting options
@@ -61,7 +61,6 @@ let mapleader = ','
 
 " }}}
 
-
 " Plugins loading {{{
 
 " load all plugins using vim-plug
@@ -80,13 +79,11 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'tomasr/molokai'
 Plug 'xolox/vim-misc'
 Plug 'xolox/vim-session'
-Plug 'Vimjas/vim-python-pep8-indent'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 call plug#end()
 
 " }}}
-
 
 " Theme and color {{{
 
@@ -99,15 +96,56 @@ colorscheme molokai
 
 " }}}
 
-
 " coc {{{
 
 let g:coc_global_extensions = ['coc-go', 'coc-pyls', 'coc-pydocstring',
   \ 'coc-css', 'coc-html', 'coc-eslint', 'coc-yaml', 'coc-json',
   \ 'coc-markdownlint', 'coc-sh', 'coc-swagger', 'coc-toml']
 
-" }}}
 
+" Always show the signcolumn, otherwise it would shift the text each time
+" diagnostics appear/become resolved.
+set signcolumn=yes
+
+" Use tab for trigger completion with characters ahead and navigate.
+" NOTE: There's always complete item selected by default, you may want to enable
+" no select by `"suggest.noselect": true` in your configuration file.
+" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
+" other plugin before putting this into your config.
+inoremap <silent><expr> <TAB>
+      \ coc#pum#visible() ? coc#pum#next(1) :
+      \ CheckBackspace() ? "\<Tab>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+
+" Make <CR> to accept selected completion item or notify coc.nvim to format
+" <C-g>u breaks current undo, please make your own choice.
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+function! CheckBackspace() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" GoTo code navigation.
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Use K to show documentation in preview window.
+nnoremap <silent> K :call ShowDocumentation()<CR>
+
+function! ShowDocumentation()
+  if CocAction('hasProvider', 'hover')
+    call CocActionAsync('doHover')
+  else
+    call feedkeys('K', 'in')
+  endif
+endfunction
+
+" }}}
 
 " vim-go {{{
 
@@ -129,7 +167,6 @@ let g:go_info_mode='gopls'
 
 " }}}
 
-
 " airline {{{
 
 let g:airline#extensions#branch#enabled = 1
@@ -141,15 +178,20 @@ let g:airline_theme='molokai'
 
 " }}}
 
-
-" vim-session {{{
+" session management & vim-session {{{
 
 let g:session_autoload = "no"
 let g:session_autosave = "yes"
 let g:session_command_aliases = 1
 
-" }}}
+" Uncomment the following to have Vim jump to the last position when
+" reopening a file
+if has("autocmd")
+  au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
+    \| exe "normal! g'\"" | endif
+endif
 
+" }}}
 
 " Other plugins settings {{{
 
@@ -161,14 +203,12 @@ let g:netrw_nogx = 1 " disable netrw's gx mapping.
 
 " }}}
 
-
 " Commands {{{
 
 " remove trailing whitespaces
 command! FixWhitespace :%s/\s\+$//e
 
 " }}}
-
 
 " Mappings configurationn {{{
 
@@ -373,7 +413,20 @@ au FileType yaml set tabstop=2
 
 " }}}
 
-" fzf settings
+" {{{ vscode integration
+if exists('g:vscode')
+    " VSCode extension
+else
+    " ordinary Neovim
+endif
+" }}}
+
+" {{{ Files associations
+au BufNewFile,BufRead Dockerfile* setlocal ft=dockerfile
+" }}}
+
+" {{{ fzf settings
+
 " --column: Show column number
 " --line-number: Show line number
 " --no-heading: Do not show file headings in results
@@ -394,3 +447,6 @@ command! -bang -nargs=* Rg
   \   <bang>0)
 nnoremap <C-g> :Rg<Cr>
 nnoremap <C-f> :Files<Cr>
+
+" }}}
+
