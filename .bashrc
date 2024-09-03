@@ -32,6 +32,8 @@ complete -cf ionice
 ############## environment ###################
 umask 022
 
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
 export EDITOR=$(which nvim)
 export PAGER=$(which less)
 export LESS="-R"
@@ -46,6 +48,9 @@ export PATH=$PATH:$(go env GOPATH)/bin
 
 # Kubebuilder
 export PATH=$PATH:/usr/local/kubebuilder/bin
+
+# krew
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 
 # jenv
 export PATH="$HOME/.jenv/bin:$PATH"
@@ -159,6 +164,15 @@ alias h='htop'
 
 alias dps="docker ps"
 alias dl="docker logs"
+
+drmi() {
+	docker image ls | awk '{print $1":"$2}' | fzf -m | xargs docker rmi
+}
+
+dexec() {
+  docker ps | awk '{print $1}' | fzf | xargs -I XXX docker exec -it XXX /bin/bash
+}
+
 
 # get shell in pod
 kshp() {
@@ -325,12 +339,11 @@ source $(brew --prefix nvm)/nvm.sh
 # Java
 #export JAVA_HOME=$(/usr/libexec/java_home -v 11.0.12)
 
-# krew
-export PATH="${PATH}:${HOME}/.krew/bin"
-source <(kubectl krew completion bash)
-
 # kyverno-cli
-source <(kubectl kyverno completion bash)
+# source <(kubectl kyverno completion bash)
+
+# Set up fzf key bindings and fuzzy completion
+eval "$(fzf --bash)"
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"'
