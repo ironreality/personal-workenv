@@ -324,7 +324,8 @@ command! FixWhitespace :%s/\s\+$//e
 
 " save file on Ctrl-S
 nnoremap <C-s> :w<CR>
-inoremap <C-s> <C-o>:w<CR>
+" add <C-o> to stay in insert mode after <C-s>
+inoremap <C-s> <Esc> :w<CR>
 " switch off search results on Space
 nnoremap <space> :nohl<CR>
 " These mappings will make it so that going to the next one in a search will
