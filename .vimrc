@@ -12,7 +12,7 @@ set autoread " reload file if the file changes on the disk
 set autowrite " write when switching buffers
 set backspace=indent,eol,start
 set belloff=all
-set cscopeverbose
+"set cscopeverbose
 set complete-=i
 set encoding=utf8
 set formatoptions=tcqronj " set vims text formatting options
@@ -24,6 +24,10 @@ set langnoremap
 set laststatus=2 " always show status line
 set ruler " ruler - line, column and % at the right bottom
 set showcmd " show last command in the status line
+set cmdheight=1 "give more space for displaying messages
+set updatetime=300 " default is 4000 ms = 4 s
+set shortmess+=c " don't pass messages to |ins-completion-menu|
+set hidden "TextEdit might fail if hidden is not set
 set sidescroll=1
 set colorcolumn=81 " highlight the 80th column as an indicator
 set viminfo+=!
@@ -57,7 +61,6 @@ let mapleader = ','
 
 " }}}
 
-
 " Plugins loading {{{
 
 " load all plugins using vim-plug
@@ -65,22 +68,23 @@ let mapleader = ','
 " put this file to ~/.vim/autoload/
 call plug#begin('~/.vim/plugged')
 Plug 'preservim/nerdtree'
-Plug 'tpope/vim-vinegar'
-Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-commentary'
 Plug 'tyru/open-browser.vim'
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
-Plug 'dense-analysis/ale'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'yaegassy/coc-nginx', {'do': 'yarn install --frozen-lockfile'}
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'tomasr/molokai'
 Plug 'xolox/vim-misc'
 Plug 'xolox/vim-session'
-Plug 'Vimjas/vim-python-pep8-indent'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+Plug 'cohama/lexima.vim'
 call plug#end()
 
 " }}}
-
 
 " Theme and color {{{
 
@@ -93,17 +97,164 @@ colorscheme molokai
 
 " }}}
 
+" coc {{{
 
-" ALE {{{
+let g:coc_global_extensions = ['coc-go', 'coc-pyls', 'coc-pydocstring',
+  \ 'coc-css', 'coc-html', 'coc-eslint', 'coc-yaml', 'coc-json',
+  \ 'coc-markdownlint', 'coc-sh', 'coc-swagger', 'coc-toml']
 
-" Error and warning signs.
-let g:ale_sign_error = '⤫'
-let g:ale_sign_warning = '⚠'
 
-let g:ale_completion_enabled = 1
+" Always show the signcolumn, otherwise it would shift the text each time
+" diagnostics appear/become resolved.
+set signcolumn=yes
+
+" Use tab for trigger completion with characters ahead and navigate
+" NOTE: There's always complete item selected by default, you may want to enable
+" no select by `"suggest.noselect": true` in your configuration file
+" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
+" other plugin before putting this into your config
+inoremap <silent><expr> <TAB>
+      \ coc#pum#visible() ? coc#pum#next(1) :
+      \ CheckBackspace() ? "\<Tab>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+
+" Make <CR> to accept selected completion item or notify coc.nvim to format
+" <C-g>u breaks current undo, please make your own choice
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+function! CheckBackspace() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" Use <c-space> to trigger completion
+if has('nvim')
+  inoremap <silent><expr> <c-space> coc#refresh()
+else
+  inoremap <silent><expr> <c-@> coc#refresh()
+endif
+
+" Use `[g` and `]g` to navigate diagnostics
+" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" GoTo code navigation
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Use K to show documentation in preview window
+nnoremap <silent> K :call ShowDocumentation()<CR>
+
+function! ShowDocumentation()
+  if CocAction('hasProvider', 'hover')
+    call CocActionAsync('doHover')
+  else
+    call feedkeys('K', 'in')
+  endif
+endfunction
+
+" Highlight the symbol and its references when holding the cursor
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" Symbol renaming
+nmap <leader>rn <Plug>(coc-rename)
+
+" Formatting selected code
+xmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
+
+augroup mygroup
+  autocmd!
+  " Setup formatexpr specified filetype(s)
+  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+  " Update signature help on jump placeholder
+  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+augroup end
+
+" Applying code actions to the selected code block
+" Example: `<leader>aap` for current paragraph
+xmap <leader>a  <Plug>(coc-codeaction-selected)
+nmap <leader>a  <Plug>(coc-codeaction-selected)
+
+" Remap keys for applying code actions at the cursor position
+nmap <leader>ac  <Plug>(coc-codeaction-cursor)
+" Remap keys for apply code actions affect whole buffer
+nmap <leader>as  <Plug>(coc-codeaction-source)
+" Apply the most preferred quickfix action to fix diagnostic on the current line
+nmap <leader>qf  <Plug>(coc-fix-current)
+
+" Remap keys for applying refactor code actions
+nmap <silent> <leader>re <Plug>(coc-codeaction-refactor)
+xmap <silent> <leader>ref  <Plug>(coc-codeaction-refactor-selected)
+nmap <silent> <leader>ref  <Plug>(coc-codeaction-refactor-selected)
+
+" Run the Code Lens action on the current line
+nmap <leader>cl  <Plug>(coc-codelens-action)
+
+" Map function and class text objects
+" NOTE: Requires 'textDocument.documentSymbol' support from the language server
+xmap if <Plug>(coc-funcobj-i)
+omap if <Plug>(coc-funcobj-i)
+xmap af <Plug>(coc-funcobj-a)
+omap af <Plug>(coc-funcobj-a)
+xmap ic <Plug>(coc-classobj-i)
+omap ic <Plug>(coc-classobj-i)
+xmap ac <Plug>(coc-classobj-a)
+omap ac <Plug>(coc-classobj-a)
+
+" Remap <C-f> and <C-b> to scroll float windows/popups
+if has('nvim-0.4.0') || has('patch-8.2.0750')
+  nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+  nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+  inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+  inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+  vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+  vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+endif
+
+" Use CTRL-S for selections ranges
+" Requires 'textDocument/selectionRange' support of language server
+nmap <silent> <C-r> <Plug>(coc-range-select)
+xmap <silent> <C-r> <Plug>(coc-range-select)
+
+" Add `:Format` command to format current buffer
+command! -nargs=0 Format :call CocActionAsync('format')
+
+" Add `:Fold` command to fold current buffer
+command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+
+" Add `:OR` command for organize imports of the current buffer
+command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.organizeImport')
+
+" Add (Neo)Vim's native statusline support
+" NOTE: Please see `:h coc-status` for integrations with external plugins that
+" provide custom statusline: lightline.vim, vim-airline
+" set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+
+" Mappings for CoCList
+" Show all diagnostics
+nnoremap <silent><nowait> <space>a  :<C-u>CocList diagnostics<cr>
+" Manage extensions
+nnoremap <silent><nowait> <space>e  :<C-u>CocList extensions<cr>
+" Show commands
+nnoremap <silent><nowait> <space>c  :<C-u>CocList commands<cr>
+" Find symbol of current document
+nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
+" Search workspace symbols
+nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
+" Do default action for next item
+nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
+" Do default action for previous item
+nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
+" Resume latest coc list
+nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
 " }}}
-
 
 " vim-go {{{
 
@@ -120,16 +271,16 @@ let g:go_fmt_command = "goimports"
 let g:go_auto_type_info = 1
 let g:go_addtags_transform = "snakecase"
 let g:go_list_type = "quickfix"
+let g:go_def_mapping_enabled = 0
 let g:go_def_mode='gopls'
 let g:go_info_mode='gopls'
 
 " }}}
 
-
 " airline {{{
 
 let g:airline#extensions#branch#enabled = 1
-let g:airline#extensions#ale#enabled = 1
+let g:airline#extensions#coc#enabled = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tagbar#enabled = 1
 let g:airline_skip_empty_sections = 1
@@ -137,15 +288,20 @@ let g:airline_theme='molokai'
 
 " }}}
 
+" session management & vim-session {{{
 
-" vim-session {{{
-
-let g:session_autoload = "yes"
-let g:session_autosave = "no"
+let g:session_autoload = "no"
+let g:session_autosave = "yes"
 let g:session_command_aliases = 1
 
-" }}}
+" Uncomment the following to have Vim jump to the last position when
+" reopening a file
+if has("autocmd")
+  au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
+    \| exe "normal! g'\"" | endif
+endif
 
+" }}}
 
 " Other plugins settings {{{
 
@@ -157,7 +313,6 @@ let g:netrw_nogx = 1 " disable netrw's gx mapping.
 
 " }}}
 
-
 " Commands {{{
 
 " remove trailing whitespaces
@@ -165,11 +320,12 @@ command! FixWhitespace :%s/\s\+$//e
 
 " }}}
 
-
 " Mappings configurationn {{{
 
 " save file on Ctrl-S
 nnoremap <C-s> :w<CR>
+" add <C-o> to stay in insert mode after <C-s>
+inoremap <C-s> <Esc> :w<CR>
 " switch off search results on Space
 nnoremap <space> :nohl<CR>
 " These mappings will make it so that going to the next one in a search will
@@ -183,6 +339,9 @@ nnoremap <C-l> :bn<CR>
 " close buffer
 nnoremap <C-q> :bd<CR>
 
+" use <Esc> in the normal way in terminal mode
+:tnoremap <Esc> <C-\><C-n>
+
 " resize windows with arrows
 nnoremap <Up>    :resize +2<CR>
 nnoremap <Down>  :resize -2<CR>
@@ -192,9 +351,9 @@ nnoremap <Right> :vertical resize -2<CR>
 " switch on/off NERDTree
 map <C-n> :NERDTreeToggle<CR>
 
-" open recent files menu (CtrlP)
-map <leader>r :CtrlPMRU<CR>
-nnoremap <leader>b :CtrlPBuffer<CR>
+" open recent files / open buffers menu (FZF)
+map <leader>r :History<CR>
+nnoremap <leader>b :Buffers<CR>
 
 " open current link or selection in browser
 nmap gx <Plug>(openbrowser-smart-search)
@@ -202,14 +361,204 @@ vmap gx <Plug>(openbrowser-smart-search)
 
 " run go code
 nnoremap <leader>gr :GoRun %<CR>
+nnoremap <leader>gt :GoTest .<CR>
 
 " show all go func declarations from the current dir
-au FileType go nmap <leader>gt :GoDeclsDir<cr>
+au FileType go nmap <leader>gd :GoDeclsDir<cr>
 
 " session management
 nnoremap <leader>so :OpenSession<Space>
 nnoremap <leader>ss :SaveSession<Space>
+nnoremap <leader>sod :OpenSession default<CR>
+nnoremap <leader>ssd :SaveSession default<CR>
 nnoremap <leader>sd :DeleteSession<CR>
 nnoremap <leader>sc :CloseSession<CR>
 
 " }}}
+
+" {{{ Language specific settings
+
+"----------------------------------------------
+" Language: Bash
+"----------------------------------------------
+au FileType sh set noexpandtab
+au FileType sh set shiftwidth=2
+au FileType sh set softtabstop=2
+au FileType sh set tabstop=2
+
+"----------------------------------------------
+" Language: gitcommit
+"----------------------------------------------
+au FileType gitcommit setlocal spell
+au FileType gitcommit setlocal textwidth=80
+
+"----------------------------------------------
+" Language: fish
+"----------------------------------------------
+au FileType fish set expandtab
+au FileType fish set shiftwidth=2
+au FileType fish set softtabstop=2
+au FileType fish set tabstop=2
+
+"----------------------------------------------
+" Language: gitconfig
+"----------------------------------------------
+au FileType gitconfig set noexpandtab
+au FileType gitconfig set shiftwidth=2
+au FileType gitconfig set softtabstop=2
+au FileType gitconfig set tabstop=2
+
+"----------------------------------------------
+" Language: HTML
+"----------------------------------------------
+au FileType html set expandtab
+au FileType html set shiftwidth=2
+au FileType html set softtabstop=2
+au FileType html set tabstop=2
+
+"----------------------------------------------
+" Language: CSS
+"----------------------------------------------
+au FileType css set expandtab
+au FileType css set shiftwidth=2
+au FileType css set softtabstop=2
+au FileType css set tabstop=2
+
+"----------------------------------------------
+" Language: JavaScript
+"----------------------------------------------
+au FileType javascript set expandtab
+au FileType javascript set shiftwidth=2
+au FileType javascript set softtabstop=2
+au FileType javascript set tabstop=2
+
+"----------------------------------------------
+" Language: JSON
+"----------------------------------------------
+au FileType json set expandtab
+au FileType json set shiftwidth=2
+au FileType json set softtabstop=2
+au FileType json set tabstop=2
+
+"----------------------------------------------
+" Language: Make
+"----------------------------------------------
+au FileType make set noexpandtab
+au FileType make set shiftwidth=2
+au FileType make set softtabstop=2
+au FileType make set tabstop=2
+
+"----------------------------------------------
+" Language: Markdown
+"----------------------------------------------
+au FileType markdown setlocal spell
+au FileType markdown set expandtab
+au FileType markdown set shiftwidth=4
+au FileType markdown set softtabstop=4
+au FileType markdown set tabstop=4
+au FileType markdown set syntax=markdown
+au FileType markdown set textwidth=80
+
+"----------------------------------------------
+" Language: Protobuf
+"----------------------------------------------
+au FileType proto set expandtab
+au FileType proto set shiftwidth=2
+au FileType proto set softtabstop=2
+au FileType proto set tabstop=2
+
+"----------------------------------------------
+" Language: Python
+"----------------------------------------------
+au FileType python set expandtab
+au FileType python set shiftwidth=4
+au FileType python set softtabstop=4
+au FileType python set tabstop=4
+
+"----------------------------------------------
+" Language: Ruby
+"----------------------------------------------
+au FileType ruby set expandtab
+au FileType ruby set shiftwidth=2
+au FileType ruby set softtabstop=2
+au FileType ruby set tabstop=2
+
+"----------------------------------------------
+" Language: SQL
+"----------------------------------------------
+au FileType sql set expandtab
+au FileType sql set shiftwidth=2
+au FileType sql set softtabstop=2
+au FileType sql set tabstop=2
+
+"----------------------------------------------
+" Language: TOML
+"----------------------------------------------
+au FileType toml set expandtab
+au FileType toml set shiftwidth=2
+au FileType toml set softtabstop=2
+au FileType toml set tabstop=2
+
+"----------------------------------------------
+" Language: TypeScript
+"----------------------------------------------
+au FileType typescript set expandtab
+au FileType typescript set shiftwidth=4
+au FileType typescript set softtabstop=4
+au FileType typescript set tabstop=4
+
+"----------------------------------------------
+" Language: vimscript
+"----------------------------------------------
+au FileType vim set expandtab
+au FileType vim set shiftwidth=4
+au FileType vim set softtabstop=4
+au FileType vim set tabstop=4
+
+"----------------------------------------------
+" Language: YAML
+"----------------------------------------------
+au FileType yaml set expandtab
+au FileType yaml set shiftwidth=2
+au FileType yaml set softtabstop=2
+au FileType yaml set tabstop=2
+
+" }}}
+
+" {{{ vscode integration
+if exists('g:vscode')
+    " VSCode extension
+else
+    " ordinary Neovim
+endif
+" }}}
+
+" {{{ Files associations
+au BufNewFile,BufRead Dockerfile* setlocal ft=dockerfile
+" }}}
+
+" {{{ fzf settings
+
+" --column: Show column number
+" --line-number: Show line number
+" --no-heading: Do not show file headings in results
+" --fixed-strings: Search term as a literal string
+" --ignore-case: Case insensitive search
+" --no-ignore: Do not respect .gitignore, etc...
+" --hidden: Search hidden files and folders
+" --follow: Follow symlinks
+" --glob: Additional conditions for search (in this case ignore everything in the .git/ folder)
+" --color: Search color options
+" command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>), 1, <bang>0)
+
+command! -bang -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg --column --line-number --hidden --ignore-case --no-heading --color=always '.shellescape(<q-args>), 1,
+  \   <bang>0 ? fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}, 'up:60%')
+  \           : fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}, 'right:50%:hidden', '?'),
+  \   <bang>0)
+nnoremap <C-g> :Rg<Cr>
+nnoremap <C-f> :Files<Cr>
+
+" }}}
+

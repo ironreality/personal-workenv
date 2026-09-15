@@ -1,14 +1,3 @@
-####### source global definitions (if any) #############
-if [ -f /etc/bash_completion ]; then
-. /etc/bash_completion
-elif [ -f /usr/local/etc/bash_completion ]; then
-. /usr/local/etc/bash_completion
-fi
-
-if [ -f ~/.bash_sensitive ]; then
-. ~/.bash_sensitive   # --> Read if present.
-fi
-
 ############  shell options ############
 #some readline fun there
 export INPUTRC=~/.inputrc
@@ -43,11 +32,11 @@ complete -cf ionice
 ############## environment ###################
 umask 022
 
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
 export EDITOR=$(which nvim)
 export PAGER=$(which less)
 export LESS="-R"
-#export PAGER=/usr/share/vim/vim80/macros/less.sh
-#alias less='/usr/share/vim/vim80/macros/less.sh'
 
 export GREP_COLORS='ms=01;31:mc=01;31:sl=:cx=:fn=0;49;92:ln=32:bn=32:se=36'
 
@@ -59,6 +48,9 @@ export PATH=$PATH:$(go env GOPATH)/bin
 
 # Kubebuilder
 export PATH=$PATH:/usr/local/kubebuilder/bin
+
+# krew
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 
 # jenv
 export PATH="$HOME/.jenv/bin:$PATH"
@@ -81,7 +73,7 @@ export MAIL="/var/mail/${USER}"
 fi
 
 #############  Shell promt ################
-export PS1='\[\e[37;1m\][\[\e[35;1m\]\u@\H\[\e[37;1m\]][\w]\[\e[m\]:'
+export PS1='\[\e[37;1m\][\[\e[35;1m\]\u@localhost\[\e[37;1m\]][\w]\[\e[m\]:'
 
 # cyan color in prompt
 # export PS1='\[\e[0;36m\][\u@\H][\w]\[\e[m\]:'
@@ -123,12 +115,12 @@ alias s='set -o vi'
 alias hi='history'
 alias t='top'
 alias i='ip addr'
-alias v='nvim -u ~/.vimrc'
+#alias v='nvim -u ~/.vimrc'
+alias v='nvim'
 alias p='pwd'
 alias e='egrep --color'
 alias sy='systemctl '
 alias sudo='sudo '
-alias svim='sudo nvim -u ~/.vimrc'
 alias ipcalc='ipcalc --nocolor'
 
 alias d='dirs -v'
@@ -173,6 +165,15 @@ alias h='htop'
 
 alias dps="docker ps"
 alias dl="docker logs"
+
+drmi() {
+	docker image ls | awk '{print $1":"$2}' | fzf -m | xargs docker rmi
+}
+
+dexec() {
+  docker ps | awk '{print $1}' | fzf | xargs -I XXX docker exec -it XXX /bin/bash
+}
+
 
 # get shell in pod
 kshp() {
@@ -295,6 +296,12 @@ complete -F _kube_get_namespaces ns kgns kgnso kdns
 alias kt='kubectx'
 alias kctx='kubectx'
 
+
+alias kb='/usr/local/bin/kubie'
+kb-init() {
+  kubie ctx -f $KUBECONFIG
+}
+
 ### FINAL ACTIONS BELOW ###
 
 # direnv - https://direnv.net/
@@ -333,11 +340,11 @@ source $(brew --prefix nvm)/nvm.sh
 # Java
 #export JAVA_HOME=$(/usr/libexec/java_home -v 11.0.12)
 
-# krew
-export PATH="${PATH}:${HOME}/.krew/bin"
-source <(kubectl krew completion bash)
-
 # kyverno-cli
-source <(kubectl kyverno completion bash)
+# source <(kubectl kyverno completion bash)
+
+# Set up fzf key bindings and fuzzy completion
+eval "$(fzf --bash)"
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"'
