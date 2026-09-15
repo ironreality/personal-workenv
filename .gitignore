@@ -6,6 +6,8 @@
 
 !.bashrc
 !.bash_profile
+!.zshrc
+!.zprofile
 !.tmux.conf
 
 !.vimrc
