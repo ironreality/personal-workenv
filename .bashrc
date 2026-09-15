@@ -73,7 +73,7 @@ export MAIL="/var/mail/${USER}"
 fi
 
 #############  Shell promt ################
-export PS1='\[\e[37;1m\][\[\e[35;1m\]\u@\H\[\e[37;1m\]][\w]\[\e[m\]:'
+export PS1='\[\e[37;1m\][\[\e[35;1m\]\u@localhost\[\e[37;1m\]][\w]\[\e[m\]:'
 
 # cyan color in prompt
 # export PS1='\[\e[0;36m\][\u@\H][\w]\[\e[m\]:'
@@ -115,7 +115,8 @@ alias s='set -o vi'
 alias hi='history'
 alias t='top'
 alias i='ip addr'
-alias v='nvim -u ~/.vimrc'
+#alias v='nvim -u ~/.vimrc'
+alias v='nvim'
 alias p='pwd'
 alias e='egrep --color'
 alias sy='systemctl '
