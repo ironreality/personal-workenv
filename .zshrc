@@ -111,6 +111,7 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias v='/usr/local/bin/nvim'
+alias nv='/opt/homebrew/bin/nvim'
 alias c='/usr/bin/clear'
 alias e='/usr/local/bin/rg'
 alias d='dirs -v'
