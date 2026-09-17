@@ -155,6 +155,9 @@ export GOPATH="/Users/vsurzhyk"
 export GOBIN=$GOPATH/bin
 export PATH=$GOBIN:$PATH
 
+# With HIST_VERIFY enabled, history expansion like !!, !$, !foo, etc. is expanded into the command line first
+unsetopt HIST_VERIFY
+
 set -o vi
 unsetopt autopushd
 
